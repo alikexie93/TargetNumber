@@ -8,12 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var compute = Compute()
+    @State private var showAlert = false
+    @State private var currentValue = 0.0
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        VStack(spacing: 24) {
+            Text("Подвинь слайдер, как можно ближе к: \(compute.targetValue)")
+            SliderView()
+            ButtonView(
+                title: "Проверить",
+                color: .blue,
+                action: { showAlert = true }
+            )
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Результат"),
+                    message: Text("Вы заработали \(compute.computeScore()) очков"),
+                    dismissButton: .default(Text("OK")) {
+                        compute.resetGame()
+                    }
+                )
+            }
+            ButtonView(
+                title: "Заново",
+                color: .pink,
+                action: compute.resetGame
+            )
         }
         .padding()
     }
